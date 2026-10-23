@@ -260,15 +260,17 @@ for (const sdk of sdks) {
     join(to, "runtime.generated.ts"),
     runtimeShim(sdk, commit, checkout, runtime, source),
   );
-  const dispatcher = source
+  const redirected = source
     .replace(`from "../src/generated/index.js"`, `from "../../src/${sdk.entry}.js"`)
     .replace(`from "../src/runtime/client.js"`, `from "./runtime.generated.js"`)
-    .replaceAll(`from "../src/runtime/`, `from "${runtime}`)
-    .replace(
-      /\n/,
-      `\n// Copied from orvanohq/${sdk.repo}@${commit} by tooling/scripts/regenerate.mjs, with imports pointed at ` +
-        `@orvano/nextjs/${sdk.entry} and the packed @orvano/${sdk.pkg}.\n// @ts-nocheck\n`,
-    );
+    .replaceAll(`from "../src/runtime/`, `from "${runtime}`);
+  // The note goes right after the first line, so the generated marker stays first (spec 0005 CGN-1).
+  const firstLineEnd = redirected.indexOf("\n") + 1;
+  const dispatcher =
+    redirected.slice(0, firstLineEnd) +
+    `// Copied from orvanohq/${sdk.repo}@${commit} by tooling/scripts/regenerate.mjs, with imports pointed at ` +
+    `@orvano/nextjs/${sdk.entry} and the packed @orvano/${sdk.pkg}.\n// @ts-nocheck\n` +
+    redirected.slice(firstLineEnd);
   if (dispatcher.includes(`"../src/`)) {
     console.error(
       `regenerate: ${sdk.repo}'s dispatcher imports something this script doesn't redirect.`,
