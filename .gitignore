@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.vitest/
+# The orvano checkout `pnpm regenerate` fetches (spec 0014 RGN-2).
+.orvano/
+# The sdk-js and sdk-js-server checkouts `pnpm regenerate` builds the vendor/ tarballs from (spec 0014 RGN-1).
+.sdks/
