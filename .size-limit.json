@@ -1,16 +1,9 @@
 [
   {
-    "name": "SIZ-1 core: createClient + Account + Rows",
-    "path": "packages/client/dist/index.js",
-    "import": "{ createClient, Account, Rows }",
-    "limit": "10 KB",
-    "gzip": true
-  },
-  {
-    "name": "SIZ-1 one more service (replace Storage with each service; core + 4 KB)",
-    "path": "packages/client/dist/index.js",
-    "import": "{ createClient, Account, Rows, Storage }",
-    "limit": "14 KB",
+    "name": "Client entry: createBrowserClient + Health (SIZ-1 budgets @orvano/client itself; this shows the trend)",
+    "path": "packages/nextjs/dist/client.js",
+    "import": "{ createBrowserClient, Health }",
+    "limit": "12 KB",
     "gzip": true
   }
 ]

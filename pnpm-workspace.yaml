@@ -4,3 +4,15 @@ packages:
   - packages/*
 
 minimumReleaseAge: 4320
+
+allowBuilds:
+  # Denied: esbuild (size-limit, tsdown, and Vitest) gets its binary from a platform package; its install script only
+  # checks that binary.
+  esbuild: false
+
+# Spec 0014 RGN-1, RGN-6, spec 0005 SDK-4: @orvano/client and @orvano/server aren't published until feature 52, so
+# packages/nextjs/package.json keeps their caret ranges and these overrides install the tarballs `pnpm regenerate`
+# packs from the sdk-js and sdk-js-server commits in orvano-contract.json.
+overrides:
+  "@orvano/client": file:vendor/orvano-client-0.0.0.tgz
+  "@orvano/server": file:vendor/orvano-server-0.0.0.tgz

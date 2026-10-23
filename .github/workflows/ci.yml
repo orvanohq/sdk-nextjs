@@ -27,10 +27,74 @@ jobs:
     permissions:
       contents: read
 
+  # Spec 0014 RGN-3, spec 0005 CGN-3: check the orvano pin, repack both tarballs from the sdk-js and sdk-js-server
+  # pins, copy their dispatchers again, and fail on any difference (vendor/, the lockfile, conformance/*/).
+  drift:
+    name: drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
+        with:
+          node-version-file: .node-version
+          cache: true
+      - run: pnpm install --frozen-lockfile
+      - name: Cache the orvano checkout (RGN-2)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .orvano
+          key: orvano-${{ hashFiles('orvano-contract.json') }}
+      - name: Regenerate from the pin (checks the contract hash too)
+        run: pnpm regenerate
+      - name: Tarballs and copies match the pins
+        run: git diff --exit-code
+
+  # Spec 0014 CNF-5, CNF-6: every client scenario through @orvano/nextjs/client and every server scenario through
+  # @orvano/nextjs/server, in Node, against Orvano and the stub from api/conformance/compose.yaml at the pinned commit,
+  # using the published ghcr.io/orvanohq/orvano:sha-<pinned commit> image.
+  conformance:
+    name: conformance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
+        with:
+          node-version-file: .node-version
+          cache: true
+      - run: pnpm install --frozen-lockfile
+      - name: Cache the orvano checkout (RGN-2)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .orvano
+          key: orvano-${{ hashFiles('orvano-contract.json') }}
+      - name: Fetch the pinned orvano commit (for its compose file)
+        run: pnpm regenerate --fetch-only
+      - name: Start Orvano, PostgreSQL, and the stub
+        run: |
+          ORVANO_IMAGE_TAG="sha-$(jq -r .commit orvano-contract.json)"
+          export ORVANO_IMAGE_TAG
+          echo "ORVANO_IMAGE_TAG=$ORVANO_IMAGE_TAG" >> "$GITHUB_ENV"
+          docker compose --file .orvano/api/conformance/compose.yaml up --detach --wait
+      - name: Conformance (both entries, Node)
+        run: pnpm conformance
+      - name: Server logs
+        if: failure()
+        run: docker compose --file .orvano/api/conformance/compose.yaml logs --no-color
+
   ci-gate:
     name: ci-gate
     if: always()
-    needs: [hygiene, sdk]
+    needs: [hygiene, sdk, drift, conformance]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     permissions: {}
