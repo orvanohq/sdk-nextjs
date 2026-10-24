@@ -1,6 +1,6 @@
 // @generated
 // Written by tooling/scripts/regenerate.mjs: the runtime helpers the dispatcher imports, from the packed
-// @orvano/client. Helpers its build drops are lifted from orvanohq/sdk-js@b2738c3b3c0ea7d04a5d1934b6cbd4da7c63fdf3
+// @orvano/client. Helpers its build drops are lifted from orvanohq/sdk-js@bf77fd0a36b46d9087353621fb735c76cdc00f80
 // src/runtime/client.ts, over the tarball's own configOf. Do not edit.
 // @ts-nocheck
 import { configOf } from "../../node_modules/@orvano/client/dist/runtime/client.js";
