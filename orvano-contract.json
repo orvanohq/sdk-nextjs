@@ -1,7 +1,7 @@
 {
-  "commit": "3df03902fbe7c877c38815fc58ec8c6a78e9d762",
+  "commit": "681e2a611e16db0a6efe7564616bfa17a81d00de",
   "apiVersion": "2026-10-22",
   "contractSha256": "1bb8ae23e9e300182561fae2d1d44ef091929a9d2d9fa72be625e6f480844932",
-  "sdkJsCommit": "fe860318e7b2036c8b0bc05ae102e5f60f67408f",
-  "sdkJsServerCommit": "73945491802c781158eb0b2f0ef26b7b40dfd049"
+  "sdkJsCommit": "9245ffc538eab44c30c755b831315a1ae78df33a",
+  "sdkJsServerCommit": "fee2c57075f871cb118fd87d648642795c7e5f73"
 }
