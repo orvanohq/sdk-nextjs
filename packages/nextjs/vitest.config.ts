@@ -23,6 +23,7 @@ const config: ViteUserConfig = defineConfig({
         test: {
           name: "conformance-server",
           include: ["conformance/server.test.ts"],
+          globalSetup: ["conformance/bootstrap.ts"],
           provide: { conformance: servers },
         },
       },
@@ -31,6 +32,7 @@ const config: ViteUserConfig = defineConfig({
         test: {
           name: "conformance-client",
           include: ["conformance/client.test.ts"],
+          globalSetup: ["conformance/bootstrap.ts"],
           provide: { conformance: servers },
         },
       },

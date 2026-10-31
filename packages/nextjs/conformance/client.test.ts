@@ -19,11 +19,13 @@ const skipList = skips as { id: string; reason: string; issue: string }[];
 const servers: Servers = {
   stubUrl: config.stubUrl,
   liveUrl: config.liveUrl,
+  project: inject("project"),
   fetch: (request) => globalThis.fetch(request),
 };
 // The identity @orvano/client sends today; NPM-6's nextjs identity needs an internal option in that package first.
 const kit: Kit<ReturnType<typeof createBrowserClient>, Parameters<typeof dispatch>[3]> = {
   clientName: `client/${sdkVersion}`,
+  projectKey: "publishableKey",
   open: (options) => createBrowserClient(options),
   dispatch,
   match,
