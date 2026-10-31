@@ -225,11 +225,12 @@ function runtimeShim(sdk, commit, checkout, runtime, dispatcherSource) {
     `// @orvano/${sdk.pkg}. Helpers its build drops are lifted from orvanohq/${sdk.repo}@${commit}`,
     "// src/runtime/client.ts, over the tarball's own configOf. Do not edit.",
     "// @ts-nocheck",
-    `import { configOf } from "${runtime}client.js";`,
+    // Only what a lifted helper uses: once a shipped service keeps every helper, nothing is lifted, and lint fails on
+    // an unused import.
+    ...(lifted.length > 0 ? [`import { configOf } from "${runtime}client.js";`] : []),
     reexported.length > 0 ? `export { ${reexported.join(", ")} } from "${runtime}client.js";` : "",
     "",
-    "type OrvanoClient = object;",
-    "",
+    ...(lifted.length > 0 ? ["type OrvanoClient = object;", ""] : []),
     ...lifted,
   ].join("\n");
 }
