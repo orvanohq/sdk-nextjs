@@ -713,12 +713,12 @@ packages:
     os: [win32]
 
   '@orvano/client@file:vendor/orvano-client-0.0.0.tgz':
-    resolution: {integrity: sha512-GVFm+WqlAJvp5m8aTmCHWYV1paYzAYCH8VUZh0k7FlFc0E/0p7YB8OaAK6BQNk9AmVWzmHEFSLFsZHr8/96gjQ==, tarball: file:vendor/orvano-client-0.0.0.tgz}
+    resolution: {integrity: sha512-E+iA0kM9y6Jcy5jds+30ePllS4n/bz1RyCd6j9qyNOJzjqvNV/UqBS0LHyxJsRUCWGsgnznTxdrN1E2wjXr6Ww==, tarball: file:vendor/orvano-client-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=22.12'}
 
   '@orvano/server@file:vendor/orvano-server-0.0.0.tgz':
-    resolution: {integrity: sha512-1YLTxNW/itq3xxeCTFta2aHkTBq/IDoJvNRi+jpiR/uc9qLmluFNa3ZsM3ABsXu2nQwbQPPs3lLa6OX+6NcMYQ==, tarball: file:vendor/orvano-server-0.0.0.tgz}
+    resolution: {integrity: sha512-GUuLKYf4R3PWS0UTrelpyy0qNdL0IKo/JHEvHx4Yyrz+r5hNyppRwYZ68dx5BOLyQvgBJ0q5rOBETa0SChMvdw==, tarball: file:vendor/orvano-server-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=22.12'}
 
