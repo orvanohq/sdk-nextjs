@@ -7,6 +7,7 @@ export interface Scenario {
   readonly id: string;
   readonly title: string;
   readonly mode: "live" | "stub";
+  readonly requires: readonly string[];
   readonly client?: { readonly key?: string };
   readonly steps: readonly {
     readonly call: string;
@@ -18,16 +19,27 @@ export interface Scenario {
   readonly expectRequests?: unknown;
 }
 
+/** The project and keys `orvano admin bootstrap-project` printed (spec 0017 SDK-4). */
+export interface BootstrappedProject {
+  readonly projectId: string;
+  readonly publishableKey: string;
+  readonly secretKey: string;
+}
+
 /** Where the servers are, and the fetch the suite itself uses. */
 export interface Servers {
   readonly stubUrl: string;
   readonly liveUrl: string;
+  /** Set when the run list holds a scenario that requires a project (spec 0014 CNF-7). */
+  readonly project?: BootstrappedProject | undefined;
   readonly fetch: (request: Request) => Promise<Response>;
 }
 
 /** One entry of this package: its factory, its dispatcher, and the identity its requests carry. */
 export interface Kit<Client, Options> {
   readonly clientName: string;
+  /** The key this entry's audience opens with on a real project (spec 0017 SDK-4). */
+  readonly projectKey: "publishableKey" | "secretKey";
   readonly open: (options: {
     url: string;
     project: string;
@@ -62,8 +74,12 @@ export async function runScenario<Client, Options>(
 ): Promise<string[]> {
   const { apiVersion, dispatch, match, substitute } = kit;
   const token = `run-${randomToken()}`;
-  const key = scenario.client?.key ?? defaultKey;
-  const variables = { apiVersion, clientName: kit.clientName, key, projectId };
+  const real = scenario.requires.includes("project") ? servers.project : undefined;
+  if (scenario.requires.includes("project") && real === undefined)
+    return ["the scenario requires a project, and the run has none"];
+  const key = scenario.client?.key ?? real?.[kit.projectKey] ?? defaultKey;
+  const project = real?.projectId ?? projectId;
+  const variables = { apiVersion, clientName: kit.clientName, key, projectId: project };
   const stub = scenario.mode === "stub";
   if (stub) {
     const loaded = await servers.fetch(
@@ -90,7 +106,7 @@ export async function runScenario<Client, Options>(
   };
   const client = kit.open({
     url: stub ? servers.stubUrl : servers.liveUrl,
-    project: projectId,
+    project,
     key,
     fetch: capture,
   });
